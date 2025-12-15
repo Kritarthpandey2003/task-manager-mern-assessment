@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react';
-import Layout from './components/Layout';
 import TaskItem from './components/TaskItem';
 import { Plus, Sparkles, CalendarDays } from 'lucide-react';
 import { getTasks, createTask, updateTask, deleteTask } from './utils/api';
