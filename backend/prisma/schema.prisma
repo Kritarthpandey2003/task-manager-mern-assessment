@@ -51,4 +51,5 @@ model Task {
   
   assigneeId  String?
   assignee    User?     @relation("TaskAssignee", fields: [assigneeId], references: [id])
+  @@map("tasks")  //
 }
