@@ -42,6 +42,7 @@ model Task {
   
   priority    Priority  @default(Medium)
   status      Status    @default(ToDo)
+  
   isCompleted Boolean @default(false)
   
   createdAt   DateTime  @default(now())
