@@ -35,23 +35,24 @@ model User {
 }
 
 model Task {
-  id          String    @id @default(uuid())
+  id          String   @id @default(uuid())
   title       String
   description String?
   dueDate     DateTime?
-  
-  priority    Priority  @default(Medium)
-  status      Status    @default(ToDo)
-  
-  isCompleted Boolean @default(false)
-  
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
 
-  creatorId   String
-  creator     User      @relation("TaskCreator", fields: [creatorId], references: [id])
-  
+  priority    Priority @default(Medium)
+  status      Status   @default(ToDo)
+
+  isCompleted Boolean  @default(false)
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @default(now()) @updatedAt  // <--- Fixed
+
+  creatorId   String?                              // <--- Fixed (Added ?)
+  creator     User?    @relation("TaskCreator", fields: [creatorId], references: [id])
+
   assigneeId  String?
-  assignee    User?     @relation("TaskAssignee", fields: [assigneeId], references: [id])
-  @@map("tasks")  //
+  assignee    User?    @relation("TaskAssignee", fields: [assigneeId], references: [id])
+  
+  @@map("tasks")
 }
