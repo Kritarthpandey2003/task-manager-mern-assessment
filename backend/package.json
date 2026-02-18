@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "nodemon src/server.ts",
     "build": "tsc",
+    "prestart": "npm run build",
     "start": "npx prisma db push --force-reset && node dist/server.js"
   },
   "keywords": [],
@@ -41,4 +42,3 @@
     "typescript": "^5.9.3"
   }
 }
-
