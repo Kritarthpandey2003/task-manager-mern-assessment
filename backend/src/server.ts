@@ -92,4 +92,5 @@ if (require.main === module) {
   });
 }
 
-export default app;
+// Export for Vercel (matches what @vercel/node expects for CommonJS)
+module.exports = app;
