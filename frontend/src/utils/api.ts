@@ -1,6 +1,7 @@
 import axios from 'axios';
 
-const API_URL = "https://task-manager-mern-assessment.onrender.com";
+// Use relative path for Vercel deployment (requests go to /api/...)
+const API_URL = "/api";
 
 export const api = axios.create({
   baseURL: API_URL,

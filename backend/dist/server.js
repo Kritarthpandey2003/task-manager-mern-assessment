@@ -30,7 +30,7 @@ app.use((0, cors_1.default)());
 app.use(express_1.default.json());
 // --- ROUTES ---
 // 1. Get all tasks
-app.get('/tasks', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+app.get('/api/tasks', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const result = yield pool.query('SELECT * FROM tasks ORDER BY id ASC');
         res.json(result.rows);
@@ -41,7 +41,7 @@ app.get('/tasks', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     }
 }));
 // 2. Add a new task
-app.post('/tasks', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+app.post('/api/tasks', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { title } = req.body;
     try {
         const result = yield pool.query('INSERT INTO tasks (title, "isCompleted") VALUES ($1, $2) RETURNING *', [title, false]);
@@ -53,7 +53,7 @@ app.post('/tasks', (req, res) => __awaiter(void 0, void 0, void 0, function* () 
     }
 }));
 // 3. Update a task (Toggle OR Edit Title)
-app.put('/tasks/:id', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+app.put('/api/tasks/:id', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { id } = req.params;
     const { isCompleted, title } = req.body; // Now we accept title too!
     try {
@@ -74,7 +74,7 @@ app.put('/tasks/:id', (req, res) => __awaiter(void 0, void 0, void 0, function* 
     }
 }));
 // 4. Delete a task
-app.delete('/tasks/:id', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+app.delete('/api/tasks/:id', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { id } = req.params;
     try {
         yield pool.query('DELETE FROM tasks WHERE id = $1', [id]);

@@ -22,7 +22,7 @@ app.use(express.json());
 // --- ROUTES ---
 
 // 1. Get all tasks
-app.get('/tasks', async (req, res) => {
+app.get('/api/tasks', async (req, res) => {
   try {
     const result = await pool.query('SELECT * FROM tasks ORDER BY id ASC');
     res.json(result.rows);
@@ -33,7 +33,7 @@ app.get('/tasks', async (req, res) => {
 });
 
 // 2. Add a new task
-app.post('/tasks', async (req, res) => {
+app.post('/api/tasks', async (req, res) => {
   const { title } = req.body;
   try {
     const result = await pool.query(
@@ -48,7 +48,7 @@ app.post('/tasks', async (req, res) => {
 });
 
 // 3. Update a task (Toggle OR Edit Title)
-app.put('/tasks/:id', async (req, res) => {
+app.put('/api/tasks/:id', async (req, res) => {
   const { id } = req.params;
   const { isCompleted, title } = req.body; // Now we accept title too!
 
@@ -75,7 +75,7 @@ app.put('/tasks/:id', async (req, res) => {
 });
 
 // 4. Delete a task
-app.delete('/tasks/:id', async (req, res) => {
+app.delete('/api/tasks/:id', async (req, res) => {
   const { id } = req.params;
   try {
     await pool.query('DELETE FROM tasks WHERE id = $1', [id]);
