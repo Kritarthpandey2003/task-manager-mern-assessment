@@ -21,6 +21,15 @@ app.use(express.json());
 
 // --- ROUTES ---
 
+// 0. Health Check
+app.get('/', (req, res) => {
+  res.status(200).send('Backend is running!');
+});
+
+app.get('/api/health', (req, res) => {
+  res.status(200).json({ status: 'ok', timestamp: new Date().toISOString() });
+});
+
 // 1. Get all tasks
 app.get('/api/tasks', async (req, res) => {
   try {
