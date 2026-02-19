@@ -1,0 +1,16 @@
+{
+    "name": "task-manager-assessment",
+    "version": "1.0.0",
+    "private": true,
+    "workspaces": [
+        "backend",
+        "frontend"
+    ],
+    "scripts": {
+        "install-all": "npm install",
+        "build": "cd backend && npm install && npm run build && cd ../frontend && npm install && npm run build"
+    },
+    "keywords": [],
+    "author": "",
+    "license": "ISC"
+}
