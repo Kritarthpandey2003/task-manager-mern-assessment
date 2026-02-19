@@ -50,15 +50,16 @@ app.get('/api/tasks', async (req, res) => {
 // 2. Add a new task
 app.post('/api/tasks', async (req, res) => {
   const { title } = req.body;
+  console.log("POST /api/tasks body:", req.body);
   try {
     const result = await pool.query(
       'INSERT INTO tasks (title, "isCompleted") VALUES ($1, $2) RETURNING *',
       [title, false]
     );
     res.json(result.rows[0]);
-  } catch (err) {
+  } catch (err: any) {
     console.error("Database Error:", err);
-    res.status(500).json({ error: 'Failed to add task' });
+    res.status(500).json({ error: 'Failed to add task', details: err.message });
   }
 });
 
