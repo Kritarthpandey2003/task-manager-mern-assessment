@@ -2,7 +2,6 @@ import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import { Pool } from 'pg';
-import bodyParser from 'body-parser';
 
 dotenv.config();
 
@@ -18,7 +17,6 @@ const pool = new Pool({
 });
 
 app.use(cors());
-app.use(bodyParser.json());
 app.use(express.json());
 
 // Log all requests
@@ -52,21 +50,15 @@ app.get('/api/tasks', async (req, res) => {
 // 2. Add a new task
 app.post('/api/tasks', async (req, res) => {
   const { title } = req.body;
-  console.log("POST /api/tasks body:", req.body);
   try {
     const result = await pool.query(
-      'INSERT INTO tasks (title, "isCompleted") VALUES ($1, $2) RETURNING *',
+      'INSERT INTO tasks (id, title, "isCompleted", "createdAt", "updatedAt") VALUES (gen_random_uuid(), $1, $2, NOW(), NOW()) RETURNING *',
       [title, false]
     );
     res.json(result.rows[0]);
   } catch (err: any) {
     console.error("Database Error:", err);
-    res.status(500).json({
-      error: 'Failed to add task',
-      details: err.message,
-      receivedBody: req.body,
-      contentType: req.headers['content-type']
-    });
+    res.status(500).json({ error: 'Failed to add task', details: err.message });
   }
 });
 
