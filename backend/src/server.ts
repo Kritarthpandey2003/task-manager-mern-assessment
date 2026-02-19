@@ -2,6 +2,7 @@ import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import { Pool } from 'pg';
+import bodyParser from 'body-parser';
 
 dotenv.config();
 
@@ -17,6 +18,7 @@ const pool = new Pool({
 });
 
 app.use(cors());
+app.use(bodyParser.json());
 app.use(express.json());
 
 // Log all requests
