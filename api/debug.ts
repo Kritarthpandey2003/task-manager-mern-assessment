@@ -1,9 +1,10 @@
-export default function handler(request, response) {
-    response.status(200).json({
-        body: request.body,
-        query: request.query,
-        cookies: request.cookies,
-        message: 'Debug endpoint works!',
-        time: new Date().toISOString()
+import { VercelRequest, VercelResponse } from '@vercel/node';
+
+export default function handler(req: VercelRequest, res: VercelResponse) {
+    res.status(200).json({
+        message: 'Debug endpoint works via TS in Root!',
+        time: new Date().toISOString(),
+        query: req.query,
+        cookies: req.cookies,
     });
 }
