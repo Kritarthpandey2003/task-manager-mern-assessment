@@ -59,7 +59,12 @@ app.post('/api/tasks', async (req, res) => {
     res.json(result.rows[0]);
   } catch (err: any) {
     console.error("Database Error:", err);
-    res.status(500).json({ error: 'Failed to add task', details: err.message });
+    res.status(500).json({
+      error: 'Failed to add task',
+      details: err.message,
+      receivedBody: req.body,
+      contentType: req.headers['content-type']
+    });
   }
 });
 
