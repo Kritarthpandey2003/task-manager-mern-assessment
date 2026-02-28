@@ -12,8 +12,8 @@ export const getTasks = async () => {
   return response.data;
 };
 
-export const createTask = async (title: string) => {
-  const response = await api.post('/tasks', { title });
+export const createTask = async (title: string, reminderTime?: string) => {
+  const response = await api.post('/tasks', { title, reminderTime });
   return response.data;
 };
 
@@ -26,8 +26,8 @@ export const deleteTask = async (id: number) => {
   await api.delete(`/tasks/${id}`);
 };
 
-// Update task title
-export const editTaskTitle = async (id: number, newTitle: string) => {
-  const response = await api.put(`/tasks/${id}`, { title: newTitle });
+// Update task details
+export const editTaskDetails = async (id: number, updates: { title?: string; reminderTime?: string | null }) => {
+  const response = await api.put(`/tasks/${id}`, updates);
   return response.data;
 };

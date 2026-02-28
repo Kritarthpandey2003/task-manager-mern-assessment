@@ -39,6 +39,7 @@ model Task {
   title       String
   description String?
   dueDate     DateTime?
+  reminderTime DateTime?
 
   priority    Priority @default(Medium)
   status      Status   @default(ToDo)

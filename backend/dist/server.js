@@ -29,6 +29,10 @@ const pool = new pg_1.Pool({
 app.use((0, cors_1.default)());
 app.use(express_1.default.json());
 // --- ROUTES ---
+// 0. Health Check
+app.get('/api/health', (req, res) => {
+    res.status(200).json({ status: 'ok', timestamp: new Date().toISOString() });
+});
 // 1. Get all tasks
 app.get('/api/tasks', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
@@ -90,4 +94,5 @@ if (require.main === module) {
         console.log(`Server is running on http://localhost:${port}`);
     });
 }
-exports.default = app;
+// Export for Vercel (matches what @vercel/node expects for CommonJS)
+module.exports = app;

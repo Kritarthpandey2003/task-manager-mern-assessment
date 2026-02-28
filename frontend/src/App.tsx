@@ -8,15 +8,78 @@ interface Task {
   id: number;
   title: string;
   isCompleted: boolean;
+  reminderTime?: string;
 }
 
 function App() {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [newTask, setNewTask] = useState('');
+  const [newReminderTime, setNewReminderTime] = useState('');
+
+  // Add background music/alarm sound
+  const alarmSound = new Audio('https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3');
 
   useEffect(() => {
     loadTasks();
   }, []);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      const now = new Date();
+      tasks.forEach(task => {
+        if (!task.isCompleted && task.reminderTime) {
+          const reminderTime = new Date(task.reminderTime);
+          // Check if current time is within 1 minute of the reminder time
+          if (now.getHours() === reminderTime.getHours() &&
+            now.getMinutes() === reminderTime.getMinutes() &&
+            now.getDate() === reminderTime.getDate()) {
+
+            // Show toast if not already shown recently (using localStorage to prevent spam)
+            const alertKey = `alarm-${task.id}`;
+            if (!localStorage.getItem(alertKey)) {
+              alarmSound.play().catch(e => console.log('Audio play failed:', e));
+              toast.custom((t) => (
+                <div className={`${t.visible ? 'animate-enter' : 'animate-leave'} max-w-md w-full bg-white shadow-lg rounded-xl pointer-events-auto flex ring-1 ring-black ring-opacity-5`}>
+                  <div className="flex-1 w-0 p-4">
+                    <div className="flex items-start">
+                      <div className="flex-shrink-0 pt-0.5">
+                        <div className="h-10 w-10 rounded-full bg-indigo-100 flex items-center justify-center">
+                          ⏰
+                        </div>
+                      </div>
+                      <div className="ml-3 flex-1">
+                        <p className="text-sm font-medium text-gray-900">
+                          Reminder!
+                        </p>
+                        <p className="mt-1 text-sm text-gray-500">
+                          It's time for: {task.title}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="flex border-l border-gray-200">
+                    <button
+                      onClick={() => {
+                        toast.dismiss(t.id);
+                        alarmSound.pause();
+                        alarmSound.currentTime = 0;
+                      }}
+                      className="w-full border border-transparent rounded-none rounded-r-lg p-4 flex items-center justify-center text-sm font-medium text-indigo-600 hover:text-indigo-500 focus:outline-none"
+                    >
+                      Dismiss
+                    </button>
+                  </div>
+                </div>
+              ), { duration: Infinity });
+              localStorage.setItem(alertKey, 'true');
+            }
+          }
+        }
+      });
+    }, 10000); // Check every 10 seconds
+
+    return () => clearInterval(interval);
+  }, [tasks]);
 
   const loadTasks = async () => {
     try {
@@ -30,9 +93,15 @@ function App() {
   const handleAddTask = async () => {
     if (!newTask.trim()) return;
     try {
-      const task = await createTask(newTask);
+      let rTime = undefined;
+      if (newReminderTime) {
+        rTime = new Date(newReminderTime).toISOString();
+      }
+
+      const task = await createTask(newTask, rTime);
       setTasks([...tasks, task]);
       setNewTask('');
+      setNewReminderTime('');
       toast.success("Task created!", { icon: '✨' });
     } catch (error) {
       toast.error("Failed to add task");
@@ -92,7 +161,7 @@ function App() {
 
           {/* Input Area */}
           <div className="p-6 pb-2">
-            <div className="relative group">
+            <div className="relative group space-y-3">
               <input
                 type="text"
                 placeholder="What's your main focus today?"
@@ -101,11 +170,23 @@ function App() {
                 onChange={(e) => setNewTask(e.target.value)}
                 onKeyDown={(e) => e.key === 'Enter' && handleAddTask()}
               />
+              <div className="flex items-center gap-2">
+                <div className="text-gray-500 bg-gray-100 p-2 rounded-xl">
+                  ⏰
+                </div>
+                <input
+                  type="datetime-local"
+                  className="flex-1 bg-gray-50 text-gray-700 placeholder-gray-400 border-2 border-gray-100 rounded-xl py-2 px-4 focus:outline-none focus:border-indigo-500 focus:bg-white transition-all text-sm"
+                  value={newReminderTime}
+                  onChange={(e) => setNewReminderTime(e.target.value)}
+                  title="Set Reminder Alarm"
+                />
+              </div>
               <button
                 onClick={handleAddTask}
-                className="absolute right-2 top-2 bottom-2 bg-indigo-600 hover:bg-indigo-700 text-white w-12 rounded-xl flex items-center justify-center transition-all shadow-lg shadow-indigo-500/30 active:scale-95"
+                className="w-full bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl py-3 flex items-center justify-center gap-2 transition-all shadow-lg shadow-indigo-500/30 active:scale-95 font-semibold mt-2"
               >
-                <Plus size={24} strokeWidth={3} />
+                <Plus size={20} strokeWidth={3} /> Add Task
               </button>
             </div>
           </div>

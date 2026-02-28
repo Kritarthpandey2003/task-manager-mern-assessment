@@ -1,0 +1,15 @@
+STATUS: 200
+HEADERS: {
+  "access-control-allow-origin": "*",
+  "cache-control": "public, max-age=0, must-revalidate",
+  "content-length": "280",
+  "content-type": "application/json; charset=utf-8",
+  "date": "Thu, 19 Feb 2026 11:29:48 GMT",
+  "etag": "W/\"118-fuYvPG0TSZEY9RSW0Nxu3ov6G1A\"",
+  "server": "Vercel",
+  "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
+  "x-powered-by": "Express",
+  "x-vercel-cache": "MISS",
+  "x-vercel-id": "bom1::iad1::jr9jj-1771500586026-6e60df14b6c4"
+}
+BODY: {"id":"af0653bd-60c1-4123-8d9c-488b6af36cc5","title":"Test Task from Script","description":null,"dueDate":null,"priority":"Medium","status":"ToDo","isCompleted":false,"createdAt":"2026-02-19T11:29:48.049Z","updatedAt":"2026-02-19T11:29:48.049Z","creatorId":null,"assigneeId":null}

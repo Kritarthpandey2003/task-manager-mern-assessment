@@ -49,11 +49,11 @@ app.get('/api/tasks', async (req, res) => {
 
 // 2. Add a new task
 app.post('/api/tasks', async (req, res) => {
-  const { title } = req.body;
+  const { title, reminderTime } = req.body;
   try {
     const result = await pool.query(
-      'INSERT INTO tasks (id, title, "isCompleted", "createdAt", "updatedAt") VALUES (gen_random_uuid(), $1, $2, NOW(), NOW()) RETURNING *',
-      [title, false]
+      'INSERT INTO tasks (id, title, "isCompleted", "reminderTime", "createdAt", "updatedAt") VALUES (gen_random_uuid(), $1, $2, $3, NOW(), NOW()) RETURNING *',
+      [title, false, reminderTime || null]
     );
     res.json(result.rows[0]);
   } catch (err: any) {
@@ -65,24 +65,34 @@ app.post('/api/tasks', async (req, res) => {
 // 3. Update a task (Toggle OR Edit Title)
 app.put('/api/tasks/:id', async (req, res) => {
   const { id } = req.params;
-  const { isCompleted, title } = req.body; // Now we accept title too!
+  const { isCompleted, title, reminderTime } = req.body;
 
   try {
     let result;
-    if (title !== undefined) {
-      // If we are editing the text
-      result = await pool.query(
-        'UPDATE tasks SET title = $1 WHERE id = $2 RETURNING *',
-        [title, id]
-      );
-    } else {
+    if (title !== undefined || reminderTime !== undefined) {
+      const updates = [];
+      const values = [];
+      let paramIndex = 1;
+      if (title !== undefined) {
+        updates.push(`title = $${paramIndex++}`);
+        values.push(title);
+      }
+      if (reminderTime !== undefined) {
+        updates.push(`"reminderTime" = $${paramIndex++}`);
+        values.push(reminderTime);
+      }
+      values.push(id);
+
+      const query = `UPDATE tasks SET ${updates.join(', ')} WHERE id = $${paramIndex} RETURNING *`;
+      result = await pool.query(query, values);
+    } else if (isCompleted !== undefined) {
       // If we are just toggling the checkbox
       result = await pool.query(
         'UPDATE tasks SET "isCompleted" = $1 WHERE id = $2 RETURNING *',
         [isCompleted, id]
       );
     }
-    res.json(result.rows[0]);
+    res.json(result?.rows[0]);
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Failed to update task' });
